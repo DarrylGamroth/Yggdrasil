@@ -1,0 +1,30 @@
+diff --git a/spa/tests/meson.build b/spa/tests/meson.build
+index 01e7eea70..4065ba33c 100644
+--- a/spa/tests/meson.build
++++ b/spa/tests/meson.build
+@@ -4,7 +4,7 @@
+ # Do it for C++ if possible (picks up C++-specific errors), otherwise for C.
+ find = find_program('find', required: false)
+ summary({'find (for header testing)': find.found()}, bool_yn: true, section: 'Optional programs')
+-if find.found()
++if get_option('tests').allowed() and find.found()
+   spa_headers = run_command(find,
+                             meson.project_source_root() / 'spa' / 'include',
+                             '-name', '*.h',
+diff --git a/spa/plugins/audioconvert/meson.build b/spa/plugins/audioconvert/meson.build
+index f1db583a9..93df242c3 100644
+--- a/spa/plugins/audioconvert/meson.build
++++ b/spa/plugins/audioconvert/meson.build
+@@ -7,11 +7,7 @@ simd_cargs = []
+ simd_dependencies = []
+ 
+ opt_flags = []
+-if host_machine.cpu_family() != 'alpha'
+-  opt_flags += '-Ofast'
+-else
+-  opt_flags += '-O3'
+-endif
++opt_flags += '-O3'
+ 
+ audioconvert_c = static_library('audioconvert_c',
+   [ 'channelmix-ops-c.c',
