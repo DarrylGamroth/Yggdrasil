@@ -52,7 +52,6 @@ meson setup builddir \
     -Dv4l2=disabled \
     -Dlibcamera=disabled \
     -Daudiomixer=disabled \
-    -Daudioconvert=disabled \
     -Dcontrol=disabled \
     -Daudiotestsrc=disabled \
     -Dvideoconvert=disabled \
