@@ -23,6 +23,18 @@ script = raw"""
 cd ${WORKSPACE}/srcdir/PipeWireAO
 atomic_patch -p1 ${WORKSPACE}/srcdir/patches/binarybuilder-compat.patch
 
+# The march tag selects the artifact but does not add compiler flags. Build
+# each x86-64 tier with the corresponding ISA while leaving aarch64 baseline
+# to the target toolchain.
+ISA_FLAGS=""
+if [[ "${march}" == "avx2" ]]; then
+    ISA_FLAGS="-mavx2 -mfma"
+elif [[ "${march}" == "avx512" ]]; then
+    ISA_FLAGS="-mavx512f -mavx512bw"
+fi
+export CFLAGS="${CFLAGS} ${ISA_FLAGS}"
+export CXXFLAGS="${CXXFLAGS} ${ISA_FLAGS}"
+
 meson setup builddir \
     --buildtype=release \
     --cross-file=${MESON_TARGET_TOOLCHAIN} \
@@ -40,7 +52,7 @@ meson setup builddir \
     -Dv4l2=disabled \
     -Dlibcamera=disabled \
     -Daudiomixer=disabled \
-    -Daudioconvert=enabled \
+    -Daudioconvert=disabled \
     -Dcontrol=disabled \
     -Daudiotestsrc=disabled \
     -Dvideoconvert=disabled \
