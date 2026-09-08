@@ -68,15 +68,19 @@ install_license LICENSE
 """
 
 # PipeWireAO is Linux-native. Publish only the AO deployment architectures:
-# an aarch64 baseline plus baseline, AVX2, and AVX-512 x86-64 artifacts.
+# an aarch64 baseline plus baseline, AVX2, and AVX-512 x86-64 artifacts. Keep
+# an untagged x86-64 baseline as a safe fallback for consumers that do not run
+# platform augmentation.
 platforms = filter(
     p -> Sys.islinux(p) && libc(p) == "glibc" && arch(p) in ("aarch64", "x86_64"),
     supported_platforms(),
 )
-platforms = expand_microarchitectures(
+append!(
     platforms,
-    ["x86_64", "avx2", "avx512"];
-    filter=p -> arch(p) == "x86_64",
+    expand_microarchitectures(
+        filter(p -> arch(p) == "x86_64", platforms),
+        ["x86_64", "avx2", "avx512"],
+    ),
 )
 
 augment_platform_block = """
@@ -84,9 +88,12 @@ augment_platform_block = """
     function augment_platform!(platform::Platform)
         @static if Sys.ARCH === :x86_64
             augment_microarchitecture!(platform)
-        else
-            platform
+            # Julia recognizes an intermediate AVX tier, but this package does
+            # not publish a distinct AVX artifact. Select the baseline artifact
+            # instead of falling through to the untagged compatibility entry.
+            platform["march"] == "avx" && (platform["march"] = "x86_64")
         end
+        return platform
     end
     """
 
