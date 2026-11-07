@@ -5,12 +5,12 @@ const YGGDRASIL_DIR = "../.."
 include(joinpath(YGGDRASIL_DIR, "platforms", "microarchitectures.jl"))
 
 name = "PipeWireAO"
-version = v"4.0.1"
+version = v"4.0.2"
 
 sources = [
     GitSource(
         "https://github.com/DarrylGamroth/PipeWireAO.git",
-        "036e70ee71de11b457ff018c6711988fab03a657",
+        "156daf39e1ecfab590d045c6b6672acdbed3f49f",
     ),
     DirectorySource("./bundled"),
 ]
