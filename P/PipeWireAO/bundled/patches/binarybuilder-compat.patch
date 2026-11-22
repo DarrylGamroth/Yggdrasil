@@ -28,26 +28,6 @@ index f1db583a9..93df242c3 100644
  
  audioconvert_c = static_library('audioconvert_c',
    [ 'channelmix-ops-c.c',
-diff --git a/spa/plugins/support/logger.c b/spa/plugins/support/logger.c
---- a/spa/plugins/support/logger.c
-+++ b/spa/plugins/support/logger.c
-@@ -11,7 +11,6 @@
- #include <errno.h>
- #include <stdio.h>
- #include <time.h>
--#include <threads.h>
- #include <fnmatch.h>
- 
- #include <spa/support/log.h>
-@@ -97,7 +96,7 @@ impl_log_logtv(void *object,
- 	spa_strbuf_append(&msg, "%s[%s]", prefix, levels[level]);
- 
- #ifdef HAVE_GETTID
--	static thread_local pid_t tid;
-+	static _Thread_local pid_t tid;
- 	if (SPA_UNLIKELY(tid == 0))
- 		tid = gettid();
- 
 diff --git a/spa/plugins/filter-graph/meson.build b/spa/plugins/filter-graph/meson.build
 --- a/spa/plugins/filter-graph/meson.build
 +++ b/spa/plugins/filter-graph/meson.build
